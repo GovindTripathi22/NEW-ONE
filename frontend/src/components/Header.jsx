@@ -107,32 +107,18 @@ export default function Header({ onToggleSidebar }) {
                 backgroundColor: 'var(--color-primary-light)',
                 color: 'var(--color-primary)',
                 textDecoration: 'none',
-                fontSize: '12px',
+                fontSize: '11px',
                 fontWeight: 'var(--font-weight-semibold)',
               }}
             >
-              <User size={14} />
-              <span>{user?.name?.split(' ')[0] || 'Profile'}</span>
+              <User size={13} />
+              <span>{user?.name?.split(' ')[0] || 'Farmer'}</span>
             </Link>
-            <Button
-              variant="text"
-              size="sm"
-              icon={LogOut}
-              onClick={() => {
-                logout();
-                navigate('/');
-              }}
-            >
-              Logout
-            </Button>
           </div>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             <Button variant="outline" size="sm" icon={LogIn} onClick={() => navigate('/login')}>
               Login
-            </Button>
-            <Button variant="primary" size="sm" onClick={() => navigate('/register')}>
-              Register
             </Button>
           </div>
         )}

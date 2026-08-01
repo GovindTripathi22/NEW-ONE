@@ -51,13 +51,6 @@ export default function LandingPage() {
     },
   ];
 
-  const stats = [
-    { label: 'Registered Farmers', value: '50,000+' },
-    { label: 'Government Schemes Indexed', value: '120+' },
-    { label: 'APMC Mandis Covered', value: '2,500+' },
-    { label: 'Advisory Queries Resolved', value: '1,00,000+' },
-  ];
-
   return (
     <Layout>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '48px', paddingBottom: '32px' }}>
@@ -147,29 +140,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Stats Counter Bar */}
-        <section
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '16px',
-            backgroundColor: 'var(--color-surface)',
-            borderRadius: 'var(--radius-card)',
-            padding: '24px',
-            border: '1px solid var(--color-border)',
-          }}
-        >
-          {stats.map((stat, idx) => (
-            <div key={idx} style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'var(--font-weight-bold)', color: 'var(--color-primary)' }}>
-                {stat.value}
-              </div>
-              <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)', marginTop: '4px' }}>
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </section>
+
 
         {/* Feature Cards Grid */}
         <section style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
