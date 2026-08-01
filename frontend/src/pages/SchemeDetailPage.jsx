@@ -88,11 +88,13 @@ export default function SchemeDetailPage() {
   }, []);
 
   const openApplyModal = () => {
+    const targetUrl = scheme.applicationUrl || scheme.officialUrl || 'https://pmkisan.gov.in';
+    const portalName = scheme.name || scheme.title || 'Official Government Portal';
     setExternalModal({
       isOpen: true,
-      targetUrl: scheme.officialUrl,
-      portalName: scheme.portalName,
-      description: `You are leaving KrishiSahayak to visit the official government site (${scheme.portalName}) to complete your scheme application.`,
+      targetUrl,
+      portalName,
+      description: `You are leaving KrishiSahayak to visit the official government site (${portalName}) to complete your scheme application.`,
     });
   };
 

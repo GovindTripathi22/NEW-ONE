@@ -43,6 +43,14 @@ export default function EligibilityPage() {
 
   const [evaluationResult, setEvaluationResult] = useState(null);
 
+  // Keep schemeId in sync with URL searchParams
+  useEffect(() => {
+    const urlSchemeId = searchParams.get('schemeId');
+    if (urlSchemeId && urlSchemeId !== formData.schemeId) {
+      setFormData((prev) => ({ ...prev, schemeId: urlSchemeId }));
+    }
+  }, [searchParams]);
+
   const currentScheme = SCHEMES_DATA?.find((s) => s.id === formData.schemeId) || SCHEMES_DATA?.[0];
 
   // Sync evaluation on form submit or scheme change

@@ -443,6 +443,7 @@ export default function SchemeBrowserPage() {
                     <div
                       style={{
                         display: 'flex',
+                        flexWrap: 'wrap',
                         gap: '8px',
                         justifyContent: 'space-between',
                         alignItems: 'center',
@@ -457,15 +458,39 @@ export default function SchemeBrowserPage() {
                       >
                         Check Eligibility
                       </Button>
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        icon={ChevronRight}
-                        iconPosition="right"
-                        onClick={() => navigate(`/schemes/${scheme.id}`)}
-                      >
-                        Details
-                      </Button>
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        {scheme.applicationUrl && (
+                          <a
+                            href={scheme.applicationUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              padding: '6px 10px',
+                              borderRadius: 'var(--radius-md)',
+                              backgroundColor: 'var(--color-surface)',
+                              border: '1px solid var(--color-border)',
+                              fontSize: '12px',
+                              color: 'var(--color-primary)',
+                              textDecoration: 'none',
+                              fontWeight: '600',
+                            }}
+                          >
+                            <ExternalLink size={14} /> Official Site
+                          </a>
+                        )}
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          icon={ChevronRight}
+                          iconPosition="right"
+                          onClick={() => navigate(`/schemes/${scheme.id}`)}
+                        >
+                          Details
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 );
