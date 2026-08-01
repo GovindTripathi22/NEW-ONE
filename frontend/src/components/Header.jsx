@@ -182,6 +182,19 @@ export default function Header({ onToggleSidebar }) {
             >
               Register Farmer Profile
             </Button>
+            <Button
+              variant="danger"
+              size="lg"
+              fullWidth
+              icon={LogOut}
+              onClick={() => {
+                setMobileMenuOpen(false);
+                logout();
+                navigate('/');
+              }}
+            >
+              Logout Session
+            </Button>
           </div>
 
           <div style={{ height: '1px', backgroundColor: 'var(--color-border)', margin: '8px 0' }} />
