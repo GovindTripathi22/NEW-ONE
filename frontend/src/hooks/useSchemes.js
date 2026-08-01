@@ -124,21 +124,68 @@ export function toggleBookmarkSchemeId(id) {
 }
 
 export function evaluateEligibility(profile, scheme) {
-  if (!scheme) return { isEligible: false, score: 0, reason: 'Scheme not found' };
-  let score = 100;
-  let missing = [];
-  
-  if (scheme.supportedStates && !scheme.supportedStates.includes('All India') && profile.state && !scheme.supportedStates.includes(profile.state)) {
-    score -= 50;
-    missing.push('State mismatch');
+  if (!scheme) {
+    return {
+      isEligible: false,
+      status: 'Not Eligible',
+      score: 0,
+      missingDocs: ['Scheme selection missing'],
+      reasons: [{ rule: 'Scheme Selected', passed: false, message: 'Please select a valid scheme from the dropdown.' }],
+    };
   }
-  
-  const status = score >= 80 ? 'Eligible' : score >= 50 ? 'Partially Eligible' : 'Not Eligible';
-  return { 
-    isEligible: score > 50, 
+
+  let score = 100;
+  const reasons = [];
+  const missingDocs = [];
+
+  // Rule 1: State Match
+  if (
+    scheme.supportedStates &&
+    !scheme.supportedStates.includes('All India') &&
+    profile.state &&
+    !scheme.supportedStates.includes(profile.state)
+  ) {
+    score -= 40;
+    reasons.push({ rule: 'State Availability', passed: false, message: `This scheme is not available in ${profile.state}.` });
+    missingDocs.push('State Residency Requirement');
+  } else {
+    reasons.push({ rule: 'State Availability', passed: true, message: 'Your state is supported for this scheme.' });
+  }
+
+  // Rule 2: Landholding Limit
+  const landNum = parseFloat(profile.landSize) || 0;
+  if (scheme.minLandSizeAcres !== undefined && scheme.minLandSizeAcres !== null && landNum < scheme.minLandSizeAcres) {
+    score -= 30;
+    reasons.push({ rule: 'Minimum Land Size', passed: false, message: `Requires at least ${scheme.minLandSizeAcres} acres (You entered ${landNum} acres).` });
+  } else {
+    reasons.push({ rule: 'Land Eligibility', passed: true, message: 'Your landholding meets scheme guidelines.' });
+  }
+
+  // Rule 3: Aadhaar & Bank Linking
+  if (!profile.aadhaarLinked) {
+    score -= 15;
+    reasons.push({ rule: 'Aadhaar Linkage', passed: false, message: 'Aadhaar must be linked with mobile number.' });
+    missingDocs.push('Aadhaar Verification');
+  } else {
+    reasons.push({ rule: 'Aadhaar Linkage', passed: true, message: 'Aadhaar linkage verified.' });
+  }
+
+  if (!profile.bankLinked) {
+    score -= 15;
+    reasons.push({ rule: 'Bank DBT Linkage', passed: false, message: 'Bank account must be Aadhaar seeded for Direct Benefit Transfer.' });
+    missingDocs.push('DBT Enabled Bank Account');
+  } else {
+    reasons.push({ rule: 'Bank DBT Linkage', passed: true, message: 'Bank DBT status active.' });
+  }
+
+  const finalScore = Math.max(0, score);
+  const status = finalScore >= 80 ? 'Eligible' : finalScore >= 50 ? 'Partially Eligible' : 'Not Eligible';
+
+  return {
+    isEligible: finalScore >= 50,
     status,
-    score, 
-    missingDocuments: missing,
-    reason: score > 50 ? 'You appear eligible based on your profile.' : 'You do not meet all criteria.'
+    score: finalScore,
+    reasons,
+    missingDocs,
   };
 }
