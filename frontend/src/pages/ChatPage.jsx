@@ -456,13 +456,15 @@ export default function ChatPage() {
         {/* Input Bar */}
         <div
           style={{
-            padding: '16px',
+            padding: '10px 12px',
             backgroundColor: 'var(--color-surface-elevated)',
             border: '1px solid var(--color-border)',
             borderRadius: '0 0 var(--radius-card) var(--radius-card)',
             display: 'flex',
-            gap: '10px',
+            gap: '8px',
             alignItems: 'center',
+            width: '100%',
+            boxSizing: 'border-box',
           }}
         >
           <button
@@ -470,8 +472,8 @@ export default function ChatPage() {
             onClick={toggleMic}
             title={isListening ? 'Stop Mic' : 'Voice Input (STT)'}
             style={{
-              width: '44px',
-              height: '44px',
+              width: '40px',
+              height: '40px',
               borderRadius: 'var(--radius-md)',
               border: isListening ? '2px solid var(--color-error)' : '1px solid var(--color-border)',
               backgroundColor: isListening ? 'var(--color-error-bg)' : 'var(--color-surface)',
@@ -483,12 +485,12 @@ export default function ChatPage() {
               flexShrink: 0,
             }}
           >
-            {isListening ? <MicOff size={20} /> : <Mic size={20} />}
+            {isListening ? <MicOff size={18} /> : <Mic size={18} />}
           </button>
 
           <input
             type="text"
-            placeholder={isListening ? 'Listening... Speak now' : 'Ask any question in Hindi / English...'}
+            placeholder={isListening ? 'Listening...' : 'Ask in Hindi / English...'}
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyDown={(e) => {
@@ -496,19 +498,20 @@ export default function ChatPage() {
             }}
             style={{
               flex: 1,
-              padding: '12px 16px',
+              minWidth: 0,
+              padding: '10px 12px',
               borderRadius: 'var(--radius-md)',
               border: '1px solid var(--color-border)',
               backgroundColor: 'var(--color-background)',
               color: 'var(--color-text-primary)',
-              fontSize: 'var(--font-size-base)',
+              fontSize: '14px',
               outline: 'none',
             }}
           />
 
           <Button
             variant="primary"
-            size="md"
+            size="sm"
             icon={Send}
             disabled={!inputMessage.trim()}
             onClick={() => handleSendMessage()}
