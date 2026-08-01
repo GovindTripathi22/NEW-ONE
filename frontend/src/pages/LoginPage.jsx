@@ -25,7 +25,7 @@ export default function LoginPage() {
 
   const from = location.state?.from?.pathname || '/dashboard';
 
-  // Step 1: Send OTP
+  // Step 1: Send OTP / Instant Demo Login
   const handleSendOtp = async (e) => {
     e.preventDefault();
     setPhoneError('');
@@ -37,10 +37,12 @@ export default function LoginPage() {
     setSubmitting(true);
     try {
       await login(phone);
-      toast.success('OTP sent! Check your phone. (Dev Code: 123456)', 'Verification Code');
-      setStep('otp');
+      // Auto-verify with 123456 for instant seamless demo login
+      await verifyOtp(phone, '123456');
+      toast.success('Login Successful! Welcome to KrishiSahayak.', 'Welcome');
+      navigate('/dashboard', { replace: true });
     } catch (err) {
-      toast.error(err.message || 'Failed to send OTP', 'Authentication Error');
+      toast.error(err.message || 'Failed to login', 'Authentication Error');
       setPhoneError(err.message);
     } finally {
       setSubmitting(false);
@@ -176,7 +178,7 @@ export default function LoginPage() {
                 iconPosition="right"
                 style={{ marginTop: '16px' }}
               >
-                Send OTP Code
+                Sign In & Go to Dashboard
               </Button>
             </form>
           )}
