@@ -64,12 +64,14 @@ export default function LandingPage() {
         {/* Hero Banner */}
         <section
           style={{
-            backgroundColor: 'var(--color-primary-light)',
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.7)), url('/assets/farm_hero.jpg')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
             borderRadius: 'var(--radius-lg)',
-            padding: '40px 24px',
+            padding: '56px 20px',
             position: 'relative',
             overflow: 'hidden',
-            border: '1px solid var(--color-primary-container)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
@@ -94,18 +96,19 @@ export default function LandingPage() {
               style={{
                 fontSize: 'clamp(28px, 5vw, 44px)',
                 fontWeight: 'var(--font-weight-bold)',
-                color: 'var(--color-text-primary)',
+                color: '#FFFFFF',
                 lineHeight: 1.2,
                 marginBottom: '16px',
+                textShadow: '0 2px 4px rgba(0,0,0,0.5)',
               }}
             >
-              Transform Your Farming with <span style={{ color: 'var(--color-primary)' }}>KrishiSahayak</span>
+              Transform Your Farming with <span style={{ color: 'var(--color-accent-light)' }}>KrishiSahayak</span>
             </h1>
 
             <p
               style={{
                 fontSize: 'var(--font-size-lg)',
-                color: 'var(--color-text-secondary)',
+                color: 'rgba(255, 255, 255, 0.9)',
                 marginBottom: '32px',
                 maxWidth: '680px',
                 marginLeft: 'auto',

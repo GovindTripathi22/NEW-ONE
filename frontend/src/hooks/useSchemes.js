@@ -46,8 +46,10 @@ export function evaluateEligibility(profile, scheme) {
     missing.push('State mismatch');
   }
   
+  const status = score >= 80 ? 'Eligible' : score >= 50 ? 'Partially Eligible' : 'Not Eligible';
   return { 
     isEligible: score > 50, 
+    status,
     score, 
     missingDocuments: missing,
     reason: score > 50 ? 'You appear eligible based on your profile.' : 'You do not meet all criteria.'

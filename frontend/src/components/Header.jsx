@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { Sun, Moon, Sprout, User, LogOut, LogIn } from 'lucide-react';
+import { Sun, Moon, Sprout, User, LogOut, LogIn, Menu, X, UserPlus, Home, LayoutDashboard, Sparkles, MessageSquare } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from './Button';
 
@@ -9,6 +9,7 @@ export default function Header({ onToggleSidebar }) {
   const { user, isAuthenticated, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <header
@@ -19,20 +20,39 @@ export default function Header({ onToggleSidebar }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 16px',
+        padding: '0 12px',
         position: 'sticky',
         top: 0,
         zIndex: 'var(--z-header)',
         boxShadow: 'var(--shadow-sm)',
+        width: '100%',
       }}
     >
-      {/* Brand & Mobile Menu Toggle */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none', minWidth: 0 }}>
+      {/* Brand & Hamburger Toggle */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+        <button
+          type="button"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle Navigation Menu"
+          style={{
+            background: 'transparent',
+            border: 'none',
+            padding: '6px',
+            cursor: 'pointer',
+            color: 'var(--color-text-primary)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+
+        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
           <div
             style={{
-              width: '32px',
-              height: '32px',
+              width: '34px',
+              height: '34px',
               borderRadius: 'var(--radius-md)',
               backgroundColor: 'var(--color-primary)',
               color: 'var(--color-on-primary)',
@@ -42,13 +62,11 @@ export default function Header({ onToggleSidebar }) {
               flexShrink: 0,
             }}
           >
-            <Sprout size={18} />
+            <Sprout size={20} />
           </div>
-          <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-            <span style={{ fontSize: 'var(--font-size-base)', fontWeight: 'var(--font-weight-bold)', color: 'var(--color-primary)' }}>
-              KrishiSahayak
-            </span>
-          </div>
+          <span style={{ fontSize: '18px', fontWeight: '800', color: 'var(--color-primary)', letterSpacing: '-0.3px', whiteSpace: 'nowrap' }}>
+            KrishiSahayak
+          </span>
         </Link>
       </div>
 
@@ -119,6 +137,96 @@ export default function Header({ onToggleSidebar }) {
           </div>
         )}
       </div>
+
+      {/* Mobile Hamburger Drawer Menu */}
+      {mobileMenuOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '64px',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'var(--color-surface-elevated)',
+            zIndex: 9999,
+            display: 'flex',
+            flexDirection: 'column',
+            padding: '20px',
+            gap: '16px',
+            boxShadow: 'var(--shadow-lg)',
+            overflowY: 'auto',
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <Button
+              variant="outline"
+              size="lg"
+              fullWidth
+              icon={LogIn}
+              onClick={() => {
+                setMobileMenuOpen(false);
+                navigate('/login');
+              }}
+            >
+              Login with Phone / OTP
+            </Button>
+            <Button
+              variant="primary"
+              size="lg"
+              fullWidth
+              icon={UserPlus}
+              onClick={() => {
+                setMobileMenuOpen(false);
+                navigate('/register');
+              }}
+            >
+              Register Farmer Profile
+            </Button>
+          </div>
+
+          <div style={{ height: '1px', backgroundColor: 'var(--color-border)', margin: '8px 0' }} />
+
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            {[
+              { label: 'Home Page', path: '/', icon: Home },
+              { label: 'Farmer Dashboard', path: '/dashboard', icon: LayoutDashboard },
+              { label: 'Govt Scheme Finder', path: '/schemes', icon: Sprout },
+              { label: 'Check Eligibility', path: '/eligibility', icon: Sparkles },
+              { label: 'AI Voice Chat Assistant', path: '/chat', icon: MessageSquare },
+              { label: 'Farmer Profile & Settings', path: '/profile', icon: User },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.path}
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    navigate(item.path);
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '12px 16px',
+                    borderRadius: 'var(--radius-md)',
+                    border: 'none',
+                    backgroundColor: 'var(--color-surface)',
+                    color: 'var(--color-text-primary)',
+                    fontSize: '15px',
+                    fontWeight: '600',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Icon size={18} style={{ color: 'var(--color-primary)' }} />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

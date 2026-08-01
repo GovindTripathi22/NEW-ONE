@@ -43,19 +43,20 @@ export default function EligibilityPage() {
 
   const [evaluationResult, setEvaluationResult] = useState(null);
 
+  const currentScheme = SCHEMES_DATA?.find((s) => s.id === formData.schemeId) || SCHEMES_DATA?.[0];
+
   // Sync evaluation on form submit or scheme change
   const handleEvaluate = (e) => {
     if (e) e.preventDefault();
-    const result = evaluateEligibility(formData.schemeId, formData);
-    setEvaluationResult(result);
-    toast.success('Eligibility evaluation complete!');
+    if (currentScheme) {
+      const result = evaluateEligibility(formData, currentScheme);
+      setEvaluationResult(result);
+    }
   };
 
   useEffect(() => {
     handleEvaluate();
-  }, [formData.schemeId]);
-
-  const currentScheme = SCHEMES_DATA.find((s) => s.id === formData.schemeId) || SCHEMES_DATA[0];
+  }, [formData.schemeId, SCHEMES_DATA]);
 
   return (
     <Layout>
@@ -83,7 +84,7 @@ export default function EligibilityPage() {
         </header>
 
         {/* Main Content Layout: Form on Left, Results on Right */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) minmax(320px, 1.2fr)', gap: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
           {/* Interactive Form Card */}
           <form
             onSubmit={handleEvaluate}
@@ -106,7 +107,7 @@ export default function EligibilityPage() {
               label="Select Government Scheme"
               value={formData.schemeId}
               onChange={(e) => setFormData((prev) => ({ ...prev, schemeId: e.target.value }))}
-              options={SCHEMES_DATA.map((s) => ({ value: s.id, label: s.title }))}
+              options={(SCHEMES_DATA || []).map((s) => ({ value: s.id, label: s.title || s.name || s.id }))}
             />
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>

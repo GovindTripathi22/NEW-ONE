@@ -188,11 +188,11 @@ export default function ChatPage() {
 
   return (
     <Layout>
-      <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 120px)', maxWidth: '900px', margin: '0 auto' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 120px)', width: '100%', maxWidth: '900px', margin: '0 auto' }}>
         {/* Header Bar */}
         <header
           style={{
-            padding: '16px 20px',
+            padding: '12px 16px',
             backgroundColor: 'var(--color-surface-elevated)',
             border: '1px solid var(--color-border)',
             borderRadius: 'var(--radius-card) var(--radius-card) 0 0',
@@ -201,28 +201,29 @@ export default function ChatPage() {
             justifyContent: 'space-between',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
             <div
               style={{
-                width: '40px',
-                height: '40px',
+                width: '36px',
+                height: '36px',
                 borderRadius: 'var(--radius-full)',
                 backgroundColor: 'var(--color-primary)',
                 color: '#FFF',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                flexShrink: 0,
               }}
             >
-              <Bot size={22} />
+              <Bot size={20} />
             </div>
-            <div>
-              <h2 style={{ fontSize: 'var(--font-size-md)', margin: 0, color: 'var(--color-text-primary)' }}>
-                KrishiSahayak AI Multilingual Voice Assistant
+            <div style={{ minWidth: 0 }}>
+              <h2 style={{ fontSize: 'var(--font-size-sm)', margin: 0, color: 'var(--color-text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                KrishiSahayak AI Voice Assistant
               </h2>
-              <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-success)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--color-success)', display: 'inline-block' }} />
-                Online & Ready (STT / TTS Enabled)
+              <span style={{ fontSize: '10px', color: 'var(--color-success)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--color-success)', display: 'inline-block' }} />
+                STT / TTS Active
               </span>
             </div>
           </div>
@@ -242,7 +243,7 @@ export default function ChatPage() {
               ])
             }
           >
-            Clear Chat
+            Clear
           </Button>
         </header>
 
@@ -250,7 +251,7 @@ export default function ChatPage() {
         <div
           style={{
             flex: 1,
-            padding: '20px',
+            padding: '16px',
             backgroundColor: 'var(--color-background)',
             borderLeft: '1px solid var(--color-border)',
             borderRight: '1px solid var(--color-border)',
@@ -258,6 +259,7 @@ export default function ChatPage() {
             display: 'flex',
             flexDirection: 'column',
             gap: '16px',
+            width: '100%',
           }}
         >
           {/* Suggested Prompts Banner */}
