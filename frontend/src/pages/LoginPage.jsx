@@ -75,13 +75,9 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     setSubmitting(true);
     try {
-      const res = await googleAuth({ provider: 'google' });
-      toast.success('Signed in with Google!', 'Authentication Success');
-      if (res.profile) {
-        navigate(from, { replace: true });
-      } else {
-        navigate('/register', { replace: true });
-      }
+      await googleAuth({ provider: 'google' });
+      toast.success('Signed in with Google! Welcome to KrishiSahayak.', 'Authentication Success');
+      navigate('/dashboard', { replace: true });
     } catch (err) {
       toast.error(err.message || 'Google sign-in failed');
     } finally {

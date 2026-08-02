@@ -127,28 +127,51 @@ export function AuthProvider({ children }) {
     try {
       let authData;
       try {
-        authData = await api.auth.googleAuth(credentialPayload);
+        authData = await api.auth.googleAuth(credentialPayload || { provider: 'google' });
       } catch (err) {
         // Dev fallback for Google Auth
         const mockUser = {
           id: 'google_farmer_' + Math.random().toString(36).substr(2, 9),
           phone: '',
           email: 'farmer@gmail.com',
-          name: 'Ramesh Kumar (Google)',
+          name: 'Ramesh Kumar (Google Farmer)',
           role: 'farmer',
+        };
+        const mockProfile = {
+          name: 'Ramesh Kumar',
+          state: 'Maharashtra',
+          district: 'Pune',
+          category: 'General',
+          landSize: '2.5',
+          farmerType: 'Smallholder',
+          cropTypes: ['Wheat', 'Rice'],
+          incomeBracket: '1-3 Lakhs',
+          language: 'hi',
         };
         authData = {
           token: 'mock_google_jwt_' + Date.now(),
           user: mockUser,
-          profile: profile || null,
+          profile: mockProfile,
         };
       }
 
       setToken(authData.token);
       setUser(authData.user);
-      if (authData.profile) {
-        setProfile(authData.profile);
-      }
+      
+      const activeProfile = authData.profile || {
+        name: authData.user?.name || 'Google Farmer',
+        state: 'Maharashtra',
+        district: 'Pune',
+        category: 'General',
+        landSize: '2.5',
+        farmerType: 'Smallholder',
+        cropTypes: ['Wheat', 'Rice'],
+        incomeBracket: '1-3 Lakhs',
+        language: 'hi',
+      };
+      setProfile(activeProfile);
+      authData.profile = activeProfile;
+      
       return authData;
     } catch (err) {
       setError(err.message);

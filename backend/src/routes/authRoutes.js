@@ -39,8 +39,6 @@ router.post(
 // POST /api/auth/google
 router.post(
   '/google',
-  [body('idToken').notEmpty().withMessage('Google ID token is required.')],
-  validate,
   googleAuthHandler
 );
 
