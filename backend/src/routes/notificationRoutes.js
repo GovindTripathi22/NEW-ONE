@@ -4,7 +4,7 @@
  */
 
 const express = require('express');
-const { getNotificationsHandler, markNotificationReadHandler } = require('../controllers/notificationController');
+const { getNotificationsHandler, markNotificationReadHandler, registerFcmTokenHandler } = require('../controllers/notificationController');
 const { authenticateJWT } = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -17,5 +17,8 @@ router.get('/', getNotificationsHandler);
 
 // PUT /api/notifications/:id/read
 router.put('/:id/read', markNotificationReadHandler);
+
+// POST /api/notifications/fcm-token
+router.post('/fcm-token', registerFcmTokenHandler);
 
 module.exports = router;

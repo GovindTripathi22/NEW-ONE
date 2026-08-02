@@ -208,6 +208,31 @@ function evaluateEligibility(farmerProfile = {}, scheme = {}) {
     }
   }
 
+  // 9. District Scope Check (Feature 6 requirement)
+  const district = farmerProfile.district ? farmerProfile.district.trim() : null;
+  const supportedDistricts = Array.isArray(rules.supportedDistricts || scheme.supportedDistricts) 
+    ? (rules.supportedDistricts || scheme.supportedDistricts) 
+    : [];
+
+  if (district) {
+    if (supportedDistricts.length > 0) {
+      const isPanDistrict = supportedDistricts.some((d) => d.toLowerCase() === 'all' || d.toLowerCase() === 'pan-district' || d.toLowerCase() === 'all districts');
+      const isDistrictSupported = supportedDistricts.some((d) => d.toLowerCase() === district.toLowerCase());
+
+      if (isPanDistrict || isDistrictSupported) {
+        score += 10;
+        reasons.push(`District '${district}' is eligible for local district benefits.`);
+      } else {
+        reasons.push(`District '${district}' is outside targeted districts [${supportedDistricts.join(', ')}].`);
+      }
+    } else {
+      score += 10;
+      reasons.push(`District '${district}' verified (scheme applies across all districts).`);
+    }
+  } else {
+    reasons.push('District not specified in profile.');
+  }
+
   // Determine overall status based on score & critical mismatches
   let status = 'not_eligible';
 

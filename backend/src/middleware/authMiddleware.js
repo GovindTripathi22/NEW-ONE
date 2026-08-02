@@ -6,6 +6,10 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+if (process.env.NODE_ENV === 'production' && (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'krishisahayak-secret-key-2026')) {
+  throw new Error('FATAL: JWT_SECRET environment variable must be explicitly defined in production!');
+}
+
 const JWT_SECRET = process.env.JWT_SECRET || 'krishisahayak-secret-key-2026';
 
 /**

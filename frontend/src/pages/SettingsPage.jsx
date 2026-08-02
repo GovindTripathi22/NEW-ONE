@@ -25,10 +25,11 @@ export default function SettingsPage() {
   const { schemes: SCHEMES_DATA, loading: schemesLoading } = useSchemes();
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
-  const { logout } = useAuth();
+  const { profile, updateProfile, logout } = useAuth();
   const toast = useToast();
 
-  const [language, setLanguage] = useState('hi-IN');
+  const [language, setLanguage] = useState(profile?.language || 'hi');
+  const [saving, setSaving] = useState(false);
   const [notifications, setNotifications] = useState({
     sms: true,
     whatsapp: true,
@@ -38,8 +39,18 @@ export default function SettingsPage() {
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  const handleSaveSettings = () => {
-    toast.success('App preferences and language settings saved!');
+  const handleSaveSettings = async () => {
+    setSaving(true);
+    try {
+      if (updateProfile) {
+        await updateProfile({ language });
+      }
+      toast.success('App preferences and language settings saved successfully!');
+    } catch (err) {
+      toast.error('Failed to update language settings');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDeleteAccount = () => {
@@ -98,14 +109,13 @@ export default function SettingsPage() {
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
               options={[
-                { value: 'hi-IN', label: 'Hindi (हिंदी)' },
-                { value: 'en-US', label: 'English' },
-                { value: 'pa-IN', label: 'Punjabi (ਪੰਜਾਬੀ)' },
-                { value: 'mr-IN', label: 'Marathi (मराठी)' },
-                { value: 'gu-IN', label: 'Gujarati (ગુજરાતી)' },
-                { value: 'ta-IN', label: 'Tamil (தமிழ்)' },
-                { value: 'te-IN', label: 'Telugu (తెలుగు)' },
-                { value: 'bn-IN', label: 'Bengali (বাংলা)' },
+                { value: 'mr', label: 'Marathi (मराठी)' },
+                { value: 'hi', label: 'Hindi (हिंदी)' },
+                { value: 'en', label: 'English' },
+                { value: 'gu', label: 'Gujarati (ગુજરાતી)' },
+                { value: 'ta', label: 'Tamil (தமிழ்)' },
+                { value: 'te', label: 'Telugu (తెలుగు)' },
+                { value: 'kn', label: 'Kannada (ಕನ್ನಡ)' },
               ]}
             />
           </div>

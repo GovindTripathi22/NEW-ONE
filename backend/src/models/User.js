@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema(
       default: 'farmer',
       required: true,
     },
+    fcmToken: {
+      type: String,
+      trim: true,
+    },
   },
   {
     timestamps: true,

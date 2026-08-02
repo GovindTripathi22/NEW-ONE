@@ -16,14 +16,28 @@ Follow these core guidelines in all responses:
 4. Strictly base your information on verified facts. Never invent rules, deadlines, or scheme details.
 5. Provide step-by-step actionable advice whenever answering how-to or application process questions.`;
 
+const LANGUAGE_NAMES = {
+  mr: 'Marathi (मराठी)',
+  hi: 'Hindi (हिंदी)',
+  en: 'English',
+  gu: 'Gujarati (ગુજરાતી)',
+  ta: 'Tamil (தமிழ்)',
+  te: 'Telugu (తెలుగు)',
+  kn: 'Kannada (ಕನ್ನಡ)',
+};
+
 /**
  * Generate AI text response using Google Generative AI SDK, falling back gracefully when key is missing or call fails.
  * @param {string} prompt - Prompt compiled by RAG service or document analyzer.
- * @param {object} options - Optional config { model, systemInstruction }
+ * @param {object} options - Optional config { model, systemInstruction, language }
  * @returns {Promise<string>} Generated text content.
  */
 async function generateContent(prompt, options = {}) {
   const apiKey = process.env.GEMINI_API_KEY;
+
+  // Append language instruction if specified
+  const langCode = options.language || 'hi';
+  const langName = LANGUAGE_NAMES[langCode] || langCode;
 
   // Use fallback if API key is missing or dummy
   if (!apiKey || apiKey.trim() === '' || apiKey === 'YOUR_GEMINI_API_KEY' || process.env.NODE_ENV === 'test_mock') {
@@ -33,7 +47,11 @@ async function generateContent(prompt, options = {}) {
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     const modelName = options.model || 'gemini-1.5-flash';
-    const systemInstruction = options.systemInstruction || SYSTEM_INSTRUCTION;
+    let systemInstruction = options.systemInstruction || SYSTEM_INSTRUCTION;
+    
+    if (langName && !systemInstruction.includes(langName)) {
+      systemInstruction += `\n6. Respond in ${langName}, using simple, clear, and empathetic vocabulary suitable for an Indian farmer with limited literacy.`;
+    }
 
     const model = genAI.getGenerativeModel({
       model: modelName,

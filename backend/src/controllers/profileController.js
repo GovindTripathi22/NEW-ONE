@@ -46,6 +46,7 @@ const updateProfileHandler = async (req, res, next) => {
       gender,
       age,
       farmerType,
+      language,
     } = req.body;
 
     const updateData = {};
@@ -60,6 +61,7 @@ const updateProfileHandler = async (req, res, next) => {
     if (gender !== undefined) updateData.gender = gender;
     if (age !== undefined) updateData.age = Number(age);
     if (farmerType !== undefined) updateData.farmerType = farmerType;
+    if (language !== undefined) updateData.language = language;
 
     const profile = await FarmerProfile.findOneAndUpdate(
       { userId },

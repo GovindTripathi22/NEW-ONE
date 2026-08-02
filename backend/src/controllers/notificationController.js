@@ -57,7 +57,31 @@ const markNotificationReadHandler = async (req, res, next) => {
   }
 };
 
+/**
+ * POST /api/notifications/fcm-token
+ * Registers or updates FCM Push token for the authenticated user.
+ */
+const registerFcmTokenHandler = async (req, res, next) => {
+  try {
+    const userId = req.user.id || req.user._id;
+    const { fcmToken } = req.body;
+    const { User } = require('../models');
+
+    if (fcmToken) {
+      await User.findByIdAndUpdate(userId, { fcmToken });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'FCM Token registered successfully.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getNotificationsHandler,
   markNotificationReadHandler,
+  registerFcmTokenHandler,
 };

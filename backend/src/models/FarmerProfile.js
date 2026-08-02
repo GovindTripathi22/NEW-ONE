@@ -62,6 +62,11 @@ const farmerProfileSchema = new mongoose.Schema(
       enum: ['marginal', 'smallholder', 'medium', 'large'],
       required: true,
     },
+    language: {
+      type: String,
+      enum: ['mr', 'hi', 'en', 'gu', 'ta', 'te', 'kn'],
+      default: 'hi',
+    },
   },
   {
     timestamps: true,

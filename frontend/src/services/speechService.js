@@ -21,13 +21,30 @@ export function isTTSSupported() {
   }
 }
 
+const LANG_MAP = {
+  mr: 'mr-IN',
+  hi: 'hi-IN',
+  en: 'en-IN',
+  gu: 'gu-IN',
+  ta: 'ta-IN',
+  te: 'te-IN',
+  kn: 'kn-IN',
+};
+
+function normalizeLang(lang) {
+  if (!lang) return 'hi-IN';
+  if (LANG_MAP[lang]) return LANG_MAP[lang];
+  if (lang.length === 2) return `${lang.toLowerCase()}-IN`;
+  return lang;
+}
+
 /**
  * Creates a Speech-to-Text (STT) Recognition controller.
  * @param {Object} options Configuration options
  * @param {Function} options.onResult Callback function receiving transcript string
  * @param {Function} [options.onError] Callback function on error
  * @param {Function} [options.onEnd] Callback function when recognition ends
- * @param {string} [options.lang='hi-IN'] Language code (e.g. 'hi-IN', 'en-US', 'pa-IN', 'ta-IN')
+ * @param {string} [options.lang='hi-IN'] Language code
  * @param {boolean} [options.continuous=false] Whether to listen continuously
  * @param {boolean} [options.interimResults=true] Whether to yield interim results
  */
@@ -39,6 +56,7 @@ export function createSTTListener({
   continuous = false,
   interimResults = true,
 }) {
+  const targetLang = normalizeLang(lang);
   if (!isSTTSupported()) {
     console.warn('Web Speech STT is not supported in this browser environment.');
     return {
@@ -58,7 +76,7 @@ export function createSTTListener({
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     recognition = new SpeechRecognition();
 
-    recognition.lang = lang;
+    recognition.lang = targetLang;
     recognition.continuous = continuous;
     recognition.interimResults = interimResults;
     recognition.maxAlternatives = 1;
@@ -157,7 +175,7 @@ export function speakText(text, options = {}) {
   window.speechSynthesis.cancel();
 
   const utterance = new SpeechSynthesisUtterance(text);
-  const lang = options.lang || 'hi-IN';
+  const lang = normalizeLang(options.lang || 'hi-IN');
   utterance.lang = lang;
   utterance.pitch = options.pitch ?? 1.0;
   utterance.rate = options.rate ?? 0.95;

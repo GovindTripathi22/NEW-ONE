@@ -28,6 +28,7 @@ export default function RegisterPage() {
     gender: profile?.gender || 'Male',
     age: profile?.age || '',
     farmerType: profile?.farmerType || 'Smallholder',
+    language: profile?.language || 'hi',
   });
 
   const [submitting, setSubmitting] = useState(false);
@@ -218,6 +219,21 @@ export default function RegisterPage() {
                     { value: 'OBC', label: 'OBC (Other Backward Class)' },
                     { value: 'SC', label: 'SC (Scheduled Caste)' },
                     { value: 'ST', label: 'ST (Scheduled Tribe)' },
+                  ]}
+                />
+                <Select
+                  label="Preferred Language (फसल व योजना भाषा)"
+                  name="language"
+                  value={formData.language}
+                  onChange={handleInputChange}
+                  options={[
+                    { value: 'hi', label: 'Hindi (हिंदी)' },
+                    { value: 'mr', label: 'Marathi (मराठी)' },
+                    { value: 'en', label: 'English' },
+                    { value: 'gu', label: 'Gujarati (ગુજરાતી)' },
+                    { value: 'ta', label: 'Tamil (தமிழ்)' },
+                    { value: 'te', label: 'Telugu (తెలుగు)' },
+                    { value: 'kn', label: 'Kannada (ಕನ್ನಡ)' },
                   ]}
                 />
               </div>

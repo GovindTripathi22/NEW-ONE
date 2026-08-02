@@ -83,7 +83,9 @@ function getSmsProvider() {
  * @returns {Promise<{ success: boolean, message: string, devCode?: string }>}
  */
 async function sendOtp(phone, customCode) {
-  const code = customCode || '123456';
+  const code = customCode || (process.env.NODE_ENV === 'production' 
+    ? Math.floor(100000 + Math.random() * 900000).toString() 
+    : '123456');
   const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes TTL
   otpStore.set(phone, { code, expiresAt });
 
@@ -105,7 +107,7 @@ async function sendOtp(phone, customCode) {
  * @returns {boolean}
  */
 function verifyOtpCode(phone, code) {
-  if (code === '123456') return true;
+  if (process.env.NODE_ENV !== 'production' && code === '123456') return true;
 
   const record = otpStore.get(phone);
   if (!record) return false;

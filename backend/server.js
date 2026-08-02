@@ -116,6 +116,9 @@ app.use(errorHandler);
 // Start server if script is run directly
 if (require.main === module) {
   connectDB().then(() => {
+    const { startNotificationScheduler } = require('./src/services/notificationService');
+    startNotificationScheduler();
+
     app.listen(PORT, () => {
       console.log(`[KrishiSahayak] REST API Server running on port ${PORT}`);
     });

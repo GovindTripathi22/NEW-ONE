@@ -1,4 +1,15 @@
-const BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const getBaseUrl = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  // Capacitor Android runtime uses capacitor://localhost or file://
+  if (typeof window !== 'undefined' && (window.location.protocol === 'capacitor:' || window.location.protocol === 'file:')) {
+    return 'http://10.0.2.2:5000/api';
+  }
+  return '/api';
+};
+
+const BASE_URL = getBaseUrl();
 
 export class ApiError extends Error {
   constructor(message, status, data = null) {

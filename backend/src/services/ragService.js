@@ -198,14 +198,27 @@ async function processChatQuery({ userId, message, conversationId }) {
     }
   }
 
-  // 4. Retrieve recent conversation history
+  // 4. Retrieve recent conversation history & farmer profile language
   const history = await getConversationHistory(userId, activeConvId, 6);
+  
+  let language = 'hi';
+  if (userId && isDbConnected()) {
+    try {
+      const { FarmerProfile } = require('../models');
+      const profile = await FarmerProfile.findOne({ userId }).select('language').lean();
+      if (profile && profile.language) {
+        language = profile.language;
+      }
+    } catch (err) {
+      // fallback default language
+    }
+  }
 
   // 5. Compile prompt for Gemini API
   const prompt = compileRagPrompt(message, schemeContext, history);
 
-  // 6. Generate response from Gemini API (or dev fallback)
-  const reply = await geminiService.generateContent(prompt);
+  // 6. Generate response from Gemini API (or dev fallback) with farmer's language
+  const reply = await geminiService.generateContent(prompt, { language });
 
   // 7. Save assistant reply to database if connected
   const schemeIds = relevantSchemes.map((s) => s._id).filter(Boolean);

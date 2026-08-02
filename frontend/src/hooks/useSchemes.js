@@ -280,7 +280,20 @@ export function evaluateEligibility(profile, scheme) {
     reasons.push({ rule: 'Land Eligibility', passed: true, message: 'Your landholding meets scheme guidelines.' });
   }
 
-  // Rule 3: Aadhaar & Bank Linking
+  // Rule 3: District Verification
+  if (profile.district && scheme.supportedDistricts && scheme.supportedDistricts.length > 0) {
+    const isDistrictSupported = scheme.supportedDistricts.some(d => d.toLowerCase() === profile.district.toLowerCase() || d.toLowerCase() === 'all');
+    if (!isDistrictSupported) {
+      score -= 20;
+      reasons.push({ rule: 'District Target', passed: false, message: `District '${profile.district}' is outside targeted districts.` });
+    } else {
+      reasons.push({ rule: 'District Target', passed: true, message: `District '${profile.district}' is verified for local benefits.` });
+    }
+  } else if (profile.district) {
+    reasons.push({ rule: 'District Target', passed: true, message: `District '${profile.district}' verified for scheme.` });
+  }
+
+  // Rule 4: Aadhaar & Bank Linking
   if (!profile.aadhaarLinked) {
     score -= 15;
     reasons.push({ rule: 'Aadhaar Linkage', passed: false, message: 'Aadhaar must be linked with mobile number.' });
