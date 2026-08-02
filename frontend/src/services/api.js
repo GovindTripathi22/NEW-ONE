@@ -48,11 +48,14 @@ export async function fetchAPI(endpoint, options = {}) {
     const response = await fetch(`${BASE_URL}${endpoint}`, config);
 
     let data = null;
-    const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
+    const contentType = response.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
       data = await response.json();
     } else {
       const text = await response.text();
+      if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html') || text.includes('<head>')) {
+        throw new ApiError('Backend server API endpoint not reachable', response.status, null);
+      }
       data = { message: text };
     }
 
