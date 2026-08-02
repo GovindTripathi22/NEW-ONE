@@ -46,21 +46,33 @@ async function generateContent(prompt, options = {}) {
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    const modelName = options.model || 'gemini-1.5-flash';
-    let systemInstruction = options.systemInstruction || SYSTEM_INSTRUCTION;
-    
-    if (langName && !systemInstruction.includes(langName)) {
-      systemInstruction += `\n6. Respond in ${langName}, using simple, clear, and empathetic vocabulary suitable for an Indian farmer with limited literacy.`;
+    const candidateModels = [options.model, 'gemini-2.5-flash', 'gemini-3.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'].filter(Boolean);
+    let text = null;
+    let lastError = null;
+
+    for (const modelName of candidateModels) {
+      try {
+        let systemInstruction = options.systemInstruction || SYSTEM_INSTRUCTION;
+        if (langName && !systemInstruction.includes(langName)) {
+          systemInstruction += `\n6. Respond in ${langName}, using simple, clear, and empathetic vocabulary suitable for an Indian farmer with limited literacy.`;
+        }
+
+        const model = genAI.getGenerativeModel({
+          model: modelName,
+          systemInstruction: systemInstruction,
+        });
+
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const resText = response.text();
+        if (resText && resText.trim().length > 0) {
+          text = resText.trim();
+          break;
+        }
+      } catch (err) {
+        lastError = err;
+      }
     }
-
-    const model = genAI.getGenerativeModel({
-      model: modelName,
-      systemInstruction: systemInstruction,
-    });
-
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
 
     if (text && text.trim().length > 0) {
       return text.trim();
