@@ -27,6 +27,7 @@ import {
   Sprout,
   Landmark,
 } from 'lucide-react';
+import { fetchAPI } from '../services/api';
 
 export default function ChatPage() {
   const { schemes: SCHEMES_DATA, loading: schemesLoading } = useSchemes();
@@ -106,7 +107,7 @@ export default function ChatPage() {
   };
 
   // Handle Send Message
-  const handleSendMessage = (textToSend) => {
+  const handleSendMessage = async (textToSend) => {
     const text = textToSend || inputMessage;
     if (!text.trim()) return;
 
@@ -121,32 +122,37 @@ export default function ChatPage() {
     setInputMessage('');
     setIsTyping(true);
 
-    // Simulate AI Response generation with authentic content
-    setTimeout(() => {
-      let aiText = '';
-      let schemeRef = null;
-      const lower = text.toLowerCase();
+    try {
+      // Call backend API (runs live Gemini AI with your API key)
+      const res = await fetchAPI('/chat', {
+        method: 'POST',
+        body: { message: text.trim() },
+      });
 
-      if (lower.includes('pm-kisan') || lower.includes('6000') || lower.includes('installment')) {
-        aiText =
-          'Pradhan Mantri Kisan Samman Nidhi (PM-KISAN) provides ₹6,000 annually in 3 equal installments of ₹2,000 directly to landholding farmers. Make sure your Aadhaar is linked with your active bank account and e-KYC is complete on pmkisan.gov.in.';
+      const aiMsg = {
+        id: (Date.now() + 1).toString(),
+        sender: 'ai',
+        text: res.reply || res.message,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        schemeRef: Array.isArray(res.relevantSchemes) && res.relevantSchemes.length > 0 ? res.relevantSchemes[0] : null,
+      };
+
+      setMessages((prev) => [...prev, aiMsg]);
+
+      // Speak response if TTS active
+      if (isTTSActive && speechService.isTTSSupported() && aiMsg.text) {
+        speechService.speakText(aiMsg.text, { lang: 'hi-IN' });
+      }
+    } catch (apiErr) {
+      console.warn('Backend API call failed, using fallback:', apiErr);
+      // Fallback for offline mode
+      let aiText = `Namaste! Based on your query "${text}", small & marginal farmers qualify for financial support under PM-KISAN, crop insurance via PMFBY, and solar pump grants under PM-KUSUM.`;
+      let schemeRef = SCHEMES_DATA[0];
+
+      const lower = text.toLowerCase();
+      if (lower.includes('pm-kisan')) {
+        aiText = 'PM-KISAN provides ₹6,000/year directly to landholding farmers in 3 installments of ₹2,000.';
         schemeRef = SCHEMES_DATA.find((s) => s.id === 'pm-kisan');
-      } else if (lower.includes('kcc') || lower.includes('credit') || lower.includes('loan')) {
-        aiText =
-          'Kisan Credit Card (KCC) provides collateral-free crop credit up to ₹1.60 Lakh (and up to ₹3 Lakh at 4% effective interest rate with prompt repayment). Required documents include Aadhaar Card, Land Records (Khatauni), and No-Dues certificate.';
-        schemeRef = SCHEMES_DATA.find((s) => s.id === 'kcc');
-      } else if (lower.includes('pmfby') || lower.includes('insurance') || lower.includes('claim')) {
-        aiText =
-          'Pradhan Mantri Fasal Bima Yojana (PMFBY) covers crop loss from natural calamities. Premium is only 1.5% for Rabi and 2% for Kharif crops. If damage occurs, report within 72 hours via the PMFBY app or toll-free helpline 1800-180-1551.';
-        schemeRef = SCHEMES_DATA.find((s) => s.id === 'pmfby');
-      } else if (lower.includes('solar') || lower.includes('kusum') || lower.includes('pump')) {
-        aiText =
-          'PM-KUSUM scheme offers up to 60% government subsidy (30% Central + 30% State) for standalone off-grid solar water pumps. Farmers need to contribute only 10% upfront cost.';
-        schemeRef = SCHEMES_DATA.find((s) => s.id === 'pm-kusum');
-      } else {
-        aiText =
-          `I analyzed your query regarding "${text}". Based on national agricultural policies, small and marginal farmers qualify for central income support (PM-KISAN), subsidized seed & fertilizer distributions, and micro-irrigation grants under PMKSY.`;
-        schemeRef = SCHEMES_DATA[0];
       }
 
       const aiMsg = {
@@ -158,8 +164,9 @@ export default function ChatPage() {
       };
 
       setMessages((prev) => [...prev, aiMsg]);
+    } finally {
       setIsTyping(false);
-    }, 1200);
+    }
   };
 
   // Handle TTS Read Aloud for Message
